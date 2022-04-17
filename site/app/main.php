@@ -2,63 +2,64 @@
 
 session_start();
 define('APP', getenv('APP'));
+define('APP_PATH', __DIR__);
 
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/api.php';
+require_once APP_PATH . '/vendor/autoload.php';
+require_once APP_PATH . '/helpers.php';
+require_once APP_PATH . '/api.php';
 
-if(isset($_GET['action']))
+if(!file_exists(APP_PATH . '/websites.json'))
 {
-    $file = __DIR__ . '/actions/' . $_GET['action'] . '.php';
-    if(file_exists($file))
+    copy(APP_PATH . '/websites.sample.json', APP_PATH . '/websites.json');
+}
+
+$websites = json_decode(file_get_contents(APP_PATH . '/websites.json'));
+
+foreach($websites as $k => $website)
+{
+    if(trim($website, '/') == $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'])
     {
-        require_once($file);
-    }
-    else
-    {
-        err404();
+        $kSite = $k;
+        break;
     }
 }
-else
-{
-    if(isset($_SESSION['jwt']))
-    {
+
+if (isset($_GET['action'])) {
+    $file = APP_PATH . '/actions/' . $_GET['action'] . '.php';
+    if (file_exists($file)) {
+        require_once($file);
+    } else {
+        err404();
+    }
+} else {
+    if (isset($_SESSION['jwt'])) {
         $result = $api->verifyToken($_SESSION['jwt']);
-        if($result->success)
-        {
+        if ($result->success) {
             $_SESSION['user'] = $result->user;
-        }
-        else
-        {
+            $_SESSION['tokenId'] = $result->tokenId;
+        } else {
             $api->getNewToken();
         }
-    }
-    else
-    {
-        if(isset($_GET['jwt']))
-        {
+    } else {
+        if (isset($_GET['jwt'])) {
             $result = $api->verifyToken($_GET['jwt']);
-            if($result->success)
-            {
+            if ($result->success) {
                 $_SESSION['user'] = $result->user;
                 $_SESSION['jwt'] = $_GET['jwt'];
+                $_SESSION['tokenId'] = $result->tokenId;
 
                 (new Url())->deleteQuery('jwt')->redirect();
-            }
-            else
-            {
+            } else {
                 $api->getNewToken();
             }
-        }
-        else
-        {
+        } else {
             $api->getNewToken();
         }
     }
 
     $less = new lessc();
-    $less->compileFile(__DIR__ . '/style.less', __DIR__ . '/../html/style.css');
+    $less->compileFile(APP_PATH . '/style.less', APP_PATH . '/../html/style.css');
 
     $page = $_SESSION['user'] ? 'logout' : 'login';
-    require_once __DIR__ . '/views/template.php';
+    require_once APP_PATH . '/views/template.php';
 }

@@ -3,40 +3,18 @@
     <form>
         <div class="mb-3">
             <label for="login" class="form-label">Login</label>
-            <input type="input" class="form-control" id="login" value="zidane" placeholder="bob marley">
+            <input type="input" class="form-control" id="login">
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" value="foot" placeholder="azerty">
+            <input type="password" class="form-control" id="password">
         </div>
         <button type="submit" class="btn btn-primary">Log in</button>
+        <br>
     </form>
+    <hr>
+    <p>Pick your fav:</p>
+    <button class="btn btn-success" data-login="Albert" data-password="e=mc²">Einstein</button>
+    <button class="btn btn-success" data-login="Greta" data-password="howDareYou!?">Thunberg</button>
+    <button class="btn btn-success" data-login="Edward" data-password="pleaseHashMe">Snowden</button>
 </div>
-<script>
-
-    document.querySelector('#login-form button').addEventListener('click', e => {
-
-        e.preventDefault()
-        $.post(
-            '/?action=login',
-            {
-                login: document.querySelector('#login').value,
-                password: document.querySelector('#password').value,
-            },
-            data => {
-
-                data = JSON.parse(data)
-
-                if(data.success)
-                {
-                    window.location = 'http://localhost:8300/?action=register&jwt=' + data.jwt + '&to=http://<?=$_SERVER['HTTP_HOST']?>'
-                }
-                else
-                {
-                    alert('Nope');
-                }
-            }
-        )
-    })
-
-</script>

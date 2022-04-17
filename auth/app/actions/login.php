@@ -13,11 +13,9 @@ $sth->bindParam('login', $data->login);
 $sth->bindParam('password', $data->password);
 $sth->execute();
 
-if ($user = $sth->fetch(PDO::FETCH_OBJ))
-{
+if ($user = $sth->fetch(PDO::FETCH_OBJ)) {
     $jwt = new JWT($data->jwt);
-    if ( ! $jwt->isValid())
-    {
+    if (! $jwt->isValid()) {
         $jwt = new JWT();
     }
 
@@ -28,9 +26,7 @@ if ($user = $sth->fetch(PDO::FETCH_OBJ))
         'user' => $user,
         'jwt' => $jwt->encode(),
     ]);
-}
-else
-{
+} else {
     echo json_encode([
         'success' => false,
     ]);

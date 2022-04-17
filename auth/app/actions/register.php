@@ -5,8 +5,7 @@
  */
 
 $jwt = new JWT($_GET['jwt']);
-if($jwt->isValid())
-{
+if ($jwt->isValid()) {
     $jwt->saveCookie();
 }
 

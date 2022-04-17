@@ -1,20 +1,17 @@
 <?php
 
-$result = $api->login($_POST['login'], $_POST['password']);
+$result = $api->login(postData('login'), postData('password'));
 
-if($result->success)
-{
+if ($result->success) {
     $_SESSION['user'] = $result->user;
     $_SESSION['jwt'] = $result->jwt;
 
     echo json_encode([
-        'success' => TRUE,
+        'success' => true,
         'jwt' => $result->jwt,
     ]);
-}
-else
-{
+} else {
     echo json_encode([
-        'success' => FALSE,
+        'success' => false,
     ]);
 }

@@ -10,8 +10,6 @@ services:
       - ./site:/var/www
     ports:
       - 8100:80
-    networks:
-      - default
     environment:
       - APP=Site 1
   site2:
@@ -21,8 +19,6 @@ services:
       - ./site:/var/www
     ports:
       - 8200:80
-    networks:
-      - default
     environment:
       - APP=Site 2
   auth:
@@ -32,8 +28,3 @@ services:
       - ./auth:/var/www
     ports:
       - 8300:80
-    networks:
-      - default
-networks:
-  default:
-      name: auth

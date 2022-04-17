@@ -8,8 +8,7 @@
 
 $data = json_decode(file_get_contents('php://input'));
 
-if( ! isset($data->jwt))
-{
+if (! isset($data->jwt)) {
     exit(json_encode([
         'success' => false,
     ]));
@@ -17,16 +16,15 @@ if( ! isset($data->jwt))
 
 $jwt = new JWT($data->jwt);
 
-if( ! $jwt->isValid())
-{
+if (! $jwt->isValid()) {
     exit(json_encode([
         'success' => false,
+        'tokenId' => $jwt->getTokenId(),
     ]));
 }
 
-$user = NULL;
-if($jwt->getTokenId())
-{
+$user = null;
+if ($jwt->getTokenId()) {
     $sth = $db->prepare('SELECT * FROM `user` WHERE `id` = :id');
     $tokenId = $jwt->getUserId();
     $sth->bindParam('id', $tokenId);
@@ -35,6 +33,7 @@ if($jwt->getTokenId())
 }
 
 echo json_encode([
-    'success' => TRUE,
+    'success' => true,
     'user' => $user,
+    'tokenId' => $jwt->getTokenId(),
 ]);

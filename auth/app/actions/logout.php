@@ -7,15 +7,13 @@
  * @var string $secret
  */
 
-if( ! isset($_COOKIE['jwt']))
-{
+if (! isset($_COOKIE['jwt'])) {
     header('Location: ' . $_GET['to']);
     exit;
 }
 
 $jwt = new JWT();
-if($jwt->isValid())
-{
+if ($jwt->isValid()) {
     $jwt->logout();
 }
 
